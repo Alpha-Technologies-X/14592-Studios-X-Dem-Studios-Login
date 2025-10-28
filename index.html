@@ -1085,15 +1085,17 @@
                     </div>
                 </div>
                 
+                <!-- REMOVED: 2FA Toggle - Now 2FA is only enabled after setup -->
+                <!-- 2FA Setup Section -->
                 <div class="setting-option">
                     <div class="setting-info">
                         <div class="setting-name">Two-Factor Authentication</div>
-                        <div class="setting-description">Require TOTP codes from authenticator app as second factor</div>
+                        <div class="setting-description" id="twofa-status-text">2FA not enabled</div>
                     </div>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="twofa-toggle" class="toggle-checkbox">
-                        <label for="twofa-toggle" class="toggle-label"></label>
-                    </div>
+                    <button class="setup-securitykey-btn" id="setup-twofa-btn">Enable 2FA</button>
+                </div>
+                <div class="twofa-status disabled" id="twofa-status">
+                    Two-factor authentication not enabled. Click "Enable 2FA" to set up.
                 </div>
 
                 <!-- Face Registration Section -->
@@ -1130,18 +1132,6 @@
                 </div>
                 <div class="securitykey-status not-registered" id="securitykey-status">
                     Security key not registered. Click "Register Key" to add a security key.
-                </div>
-                
-                <!-- 2FA Setup Section -->
-                <div class="setting-option">
-                    <div class="setting-info">
-                        <div class="setting-name">2FA Setup</div>
-                        <div class="setting-description" id="twofa-status-text">2FA not enabled</div>
-                    </div>
-                    <button class="setup-securitykey-btn" id="setup-twofa-btn">Enable 2FA</button>
-                </div>
-                <div class="twofa-status disabled" id="twofa-status">
-                    Two-factor authentication not enabled. Click "Enable 2FA" to set up.
                 </div>
             </div>
             
@@ -1271,7 +1261,7 @@
         const faceidToggle = document.getElementById('faceid-toggle');
         const passkeyToggle = document.getElementById('passkey-toggle');
         const securitykeyToggle = document.getElementById('securitykey-toggle');
-        const twofaToggle = document.getElementById('twofa-toggle');
+        // REMOVED: twofaToggle since 2FA is now setup-only
         const registerFaceBtn = document.getElementById('register-face-btn');
         const setupPasskeyBtn = document.getElementById('setup-passkey-btn');
         const setupSecuritykeyBtn = document.getElementById('setup-securitykey-btn');
@@ -1298,7 +1288,7 @@
         let faceRegistrationDetectionInterval = null;
         let faceVerificationDetectionInterval = null;
         
-        // User authentication data
+        // User authentication data - REMOVED twofa from authMethods since it's setup-only
         let userData = {
             pin: localStorage.getItem('memberPortalPin'),
             faceDescriptor: localStorage.getItem('memberPortalFaceDescriptor'),
@@ -1310,8 +1300,8 @@
                 pin: localStorage.getItem('memberPortalUsePin') !== 'false',
                 faceid: localStorage.getItem('memberPortalUseFaceID') === 'true',
                 passkey: localStorage.getItem('memberPortalUsePasskey') === 'true',
-                securitykey: localStorage.getItem('memberPortalUseSecurityKey') === 'true',
-                twofa: localStorage.getItem('memberPortalUse2FA') === 'true'
+                securitykey: localStorage.getItem('memberPortalUseSecurityKey') === 'true'
+                // REMOVED: twofa from authMethods
             }
         };
 
@@ -1589,7 +1579,7 @@
                 pinSection.style.display = 'none';
                 
                 // Check if 2FA is enabled and should be required
-                if (userData.authMethods.twofa && userData.twofaEnabled) {
+                if (userData.twofaEnabled) {
                     require2FA = true;
                     show2FASection();
                 } else {
@@ -1600,7 +1590,7 @@
                     pinSection.style.display = 'none';
                     
                     // Check if 2FA is enabled and should be required
-                    if (userData.authMethods.twofa && userData.twofaEnabled) {
+                    if (userData.twofaEnabled) {
                         require2FA = true;
                         show2FASection();
                     } else {
@@ -1811,11 +1801,8 @@
                 updatePasskeyStatus();
                 
                 if (isFirstTimeSetup) {
-                    userData.authMethods.passkey = true;
-                    localStorage.setItem('memberPortalUsePasskey', 'true');
-                    
                     // Check if 2FA is required after passkey setup
-                    if (userData.authMethods.twofa && userData.twofaEnabled) {
+                    if (userData.twofaEnabled) {
                         require2FA = true;
                         setTimeout(() => {
                             passkeySection.style.display = 'none';
@@ -1885,7 +1872,7 @@
                 passkeyStatus.textContent = "✓ Authentication successful!";
                 
                 // Check if 2FA is required after passkey auth
-                if (userData.authMethods.twofa && userData.twofaEnabled) {
+                if (userData.twofaEnabled) {
                     require2FA = true;
                     setTimeout(() => {
                         passkeySection.style.display = 'none';
@@ -1984,11 +1971,8 @@
                 updateSecurityKeyStatus();
                 
                 if (isFirstTimeSetup) {
-                    userData.authMethods.securitykey = true;
-                    localStorage.setItem('memberPortalUseSecurityKey', 'true');
-                    
                     // Check if 2FA is required after security key setup
-                    if (userData.authMethods.twofa && userData.twofaEnabled) {
+                    if (userData.twofaEnabled) {
                         require2FA = true;
                         setTimeout(() => {
                             securitykeySection.style.display = 'none';
@@ -2058,7 +2042,7 @@
                 securitykeyStatus.textContent = "✓ Authentication successful!";
                 
                 // Check if 2FA is required after security key auth
-                if (userData.authMethods.twofa && userData.twofaEnabled) {
+                if (userData.twofaEnabled) {
                     require2FA = true;
                     setTimeout(() => {
                         securitykeySection.style.display = 'none';
@@ -2235,7 +2219,7 @@
                             faceVerificationOverlay.style.borderColor = '#4cd964';
                             
                             // Check if 2FA is required after face verification
-                            if (userData.authMethods.twofa && userData.twofaEnabled) {
+                            if (userData.twofaEnabled) {
                                 require2FA = true;
                                 setTimeout(() => {
                                     faceidVerificationSection.style.display = 'none';
@@ -2405,11 +2389,8 @@
                     updateFaceStatus();
                     isRegisteringFace = false;
                 } else {
-                    userData.authMethods.faceid = true;
-                    localStorage.setItem('memberPortalUseFaceID', 'true');
-                    
                     // Check if 2FA is required after face registration
-                    if (userData.authMethods.twofa && userData.twofaEnabled) {
+                    if (userData.twofaEnabled) {
                         require2FA = true;
                         faceidRegistrationSection.style.display = 'none';
                         stopFaceIDRegistration();
@@ -2722,7 +2703,7 @@
             faceidToggle.checked = userData.authMethods.faceid;
             passkeyToggle.checked = userData.authMethods.passkey;
             securitykeyToggle.checked = userData.authMethods.securitykey;
-            twofaToggle.checked = userData.authMethods.twofa;
+            // REMOVED: twofaToggle since 2FA is now setup-only
             
             updateFaceStatus();
             updatePasskeyStatus();
@@ -2769,9 +2750,9 @@
             userData.authMethods.faceid = faceidToggle.checked;
             userData.authMethods.passkey = passkeyToggle.checked;
             userData.authMethods.securitykey = securitykeyToggle.checked;
-            userData.authMethods.twofa = twofaToggle.checked;
+            // REMOVED: twofa from authMethods since it's setup-only
             
-            if (!userData.authMethods.pin && !userData.authMethods.faceid && !userData.authMethods.passkey && !userData.authMethods.securitykey && !userData.authMethods.twofa) {
+            if (!userData.authMethods.pin && !userData.authMethods.faceid && !userData.authMethods.passkey && !userData.authMethods.securitykey) {
                 userData.authMethods.pin = true;
                 pinToggle.checked = true;
             }
@@ -2780,7 +2761,7 @@
             localStorage.setItem('memberPortalUseFaceID', userData.authMethods.faceid.toString());
             localStorage.setItem('memberPortalUsePasskey', userData.authMethods.passkey.toString());
             localStorage.setItem('memberPortalUseSecurityKey', userData.authMethods.securitykey.toString());
-            localStorage.setItem('memberPortalUse2FA', userData.authMethods.twofa.toString());
+            // REMOVED: twofa settings storage since it's setup-only
             
             settingsSection.style.display = 'none';
             portalContainer.style.display = 'block';
@@ -2818,7 +2799,7 @@
                 faceidToggle.checked = userData.authMethods.faceid;
                 passkeyToggle.checked = userData.authMethods.passkey;
                 securitykeyToggle.checked = userData.authMethods.securitykey;
-                twofaToggle.checked = userData.authMethods.twofa;
+                // REMOVED: twofaToggle since 2FA is now setup-only
                 
                 updateFaceStatus();
                 updatePasskeyStatus();
