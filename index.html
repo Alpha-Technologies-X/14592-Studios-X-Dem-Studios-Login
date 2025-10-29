@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Member Portal | 14592 Studios X Dem Studios</title>
     <style>
-        /* All your existing CSS remains exactly the same */
         * {
             margin: 0;
             padding: 0;
@@ -569,12 +568,12 @@
             min-width: 120px;
         }
 
-        .register-face-btn, .setup-passkey-btn, .setup-securitykey-btn {
+        .register-face-btn, .setup-passkey-btn, .setup-securitykey-btn, .setup-twofa-btn {
             background: #007AFF;
             margin-top: 10px;
         }
 
-        .register-face-btn:hover, .setup-passkey-btn:hover, .setup-securitykey-btn:hover {
+        .register-face-btn:hover, .setup-passkey-btn:hover, .setup-securitykey-btn:hover, .setup-twofa-btn:hover {
             background: #0056CC;
         }
 
@@ -850,7 +849,6 @@
                 <option value="passkey">Passkey</option>
                 <option value="securitykey">Security Key</option>
                 <option value="faceid">Face ID</option>
-                <!-- REMOVED: 2FA option from dropdown since it's only a second factor -->
             </select>
             
             <div class="method-description" id="method-description">
@@ -878,6 +876,36 @@
                 <button class="pin-clear" id="pin-clear">Clear</button>
             </div>
             <div class="error" id="pin-error"></div>
+        </div>
+        
+        <!-- Face ID Section -->
+        <div class="faceid-section" id="faceid-section" style="display: none;">
+            <h2 class="section-title">Face ID Authentication</h2>
+            <p class="faceid-instructions" id="faceid-instructions">Position your face within the frame for authentication</p>
+            <div class="faceid-container">
+                <div id="faceid-video-container">
+                    <div class="placeholder-text" id="faceid-placeholder">
+                        <div class="camera-icon">📷</div>
+                        <p>Camera feed will appear here</p>
+                    </div>
+                    <video id="faceid-video" playsinline></video>
+                    <div class="face-overlay" id="face-overlay"></div>
+                </div>
+                <div class="face-match-indicator" id="face-match-indicator">
+                    Face detected - verifying identity...
+                </div>
+                <div class="controls">
+                    <button id="faceid-start-btn">Start Face ID</button>
+                    <button id="faceid-stop-btn" disabled>Stop Face ID</button>
+                </div>
+                <p class="status" id="faceid-status">Click "Start Face ID" to begin</p>
+                <div class="error" id="faceid-error"></div>
+                <div class="success" id="faceid-success"></div>
+            </div>
+            <div class="faceid-buttons">
+                <button class="faceid-submit" id="faceid-submit" style="display: none;">Verify Face</button>
+                <button class="faceid-cancel" id="faceid-cancel">Cancel</button>
+            </div>
         </div>
         
         <!-- 2FA Section (Only used as second factor) -->
@@ -954,88 +982,6 @@
             <div class="error" id="securitykey-error"></div>
         </div>
         
-        <!-- Face ID Registration Section -->
-        <div class="faceid-section" id="faceid-registration-section" style="display: none;">
-            <h2 class="section-title">Face ID Setup</h2>
-            <p class="faceid-instructions">Position your face in the frame to register your Face ID</p>
-            <div class="face-instructions">
-                <p>💡 <strong>Tips for better detection:</strong></p>
-                <p>• Make sure your face is well-lit</p>
-                <p>• Look directly at the camera</p>
-                <p>• Remove sunglasses or hats</p>
-            </div>
-            <div class="faceid-container">
-                <div id="faceid-registration-video-container">
-                    <div class="placeholder-text" id="faceid-registration-placeholder">
-                        <div class="camera-icon">👤</div>
-                        <p>Camera feed will appear here</p>
-                    </div>
-                    <video id="faceid-registration-video" playsinline></video>
-                    <div class="face-overlay" id="face-registration-overlay"></div>
-                </div>
-                <div class="face-scanning" id="face-registration-scanning">
-                    <div>Looking for your face...</div>
-                    <div class="face-scanning-dots">
-                        <div class="face-scanning-dot"></div>
-                        <div class="face-scanning-dot"></div>
-                        <div class="face-scanning-dot"></div>
-                    </div>
-                </div>
-                <div class="detection-stats" id="face-registration-stats">
-                    Face detected: <span id="registration-confidence">0%</span> confidence
-                </div>
-                <div class="face-match-indicator" id="face-registration-indicator">
-                    ✓ Face detected! Click "Register Face" to save
-                </div>
-                <div class="faceid-buttons">
-                    <button class="faceid-submit" id="faceid-registration-submit" disabled>Register Face</button>
-                    <button class="faceid-cancel" id="faceid-registration-cancel">Cancel</button>
-                </div>
-                <div class="error" id="faceid-registration-error"></div>
-            </div>
-        </div>
-
-        <!-- Face ID Verification Section -->
-        <div class="faceid-section face-verification-section" id="faceid-verification-section" style="display: none;">
-            <h2 class="section-title">Face ID Verification</h2>
-            <p class="faceid-instructions">Position your face in the frame to verify your identity</p>
-            <div class="face-instructions">
-                <p>💡 <strong>Look directly at the camera</strong></p>
-                <p>Make sure your face is clearly visible</p>
-            </div>
-            <div class="faceid-container">
-                <div id="faceid-verification-video-container">
-                    <div class="placeholder-text" id="faceid-verification-placeholder">
-                        <div class="camera-icon">👤</div>
-                        <p>Camera feed will appear here</p>
-                    </div>
-                    <video id="faceid-verification-video" playsinline></video>
-                    <div class="face-overlay" id="face-verification-overlay"></div>
-                </div>
-                <div class="face-scanning" id="face-verification-scanning">
-                    <div>Verifying your identity...</div>
-                    <div class="face-scanning-dots">
-                        <div class="face-scanning-dot"></div>
-                        <div class="face-scanning-dot"></div>
-                        <div class="face-scanning-dot"></div>
-                    </div>
-                </div>
-                <div class="detection-stats" id="face-verification-stats">
-                    Match confidence: <span id="verification-confidence">0%</span>
-                </div>
-                <div class="face-match-indicator" id="face-verification-indicator">
-                    ✓ Face verified successfully
-                </div>
-                <div class="face-match-indicator unknown" id="face-verification-failed">
-                    ✗ Face not recognized. Please try again or use another method.
-                </div>
-                <div class="faceid-buttons">
-                    <button class="faceid-cancel" id="faceid-verification-cancel">Use Another Method</button>
-                </div>
-                <div class="error" id="faceid-verification-error"></div>
-            </div>
-        </div>
-
         <!-- Settings Section -->
         <div class="settings-section" id="settings-section" style="display: none;">
             <h2 class="section-title">Security Settings</h2>
@@ -1049,17 +995,6 @@
                     <div class="toggle-switch">
                         <input type="checkbox" id="pin-toggle" class="toggle-checkbox" checked>
                         <label for="pin-toggle" class="toggle-label"></label>
-                    </div>
-                </div>
-                
-                <div class="setting-option">
-                    <div class="setting-info">
-                        <div class="setting-name">Face ID Authentication</div>
-                        <div class="setting-description">Use facial recognition to access your portal</div>
-                    </div>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="faceid-toggle" class="toggle-checkbox">
-                        <label for="faceid-toggle" class="toggle-label"></label>
                     </div>
                 </div>
                 
@@ -1085,29 +1020,27 @@
                     </div>
                 </div>
                 
-                <!-- REMOVED: 2FA Toggle - Now 2FA is only enabled after setup -->
+                <div class="setting-option">
+                    <div class="setting-info">
+                        <div class="setting-name">Face ID Authentication</div>
+                        <div class="setting-description">Use facial recognition for authentication</div>
+                    </div>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="faceid-toggle" class="toggle-checkbox">
+                        <label for="faceid-toggle" class="toggle-label"></label>
+                    </div>
+                </div>
+                
                 <!-- 2FA Setup Section -->
                 <div class="setting-option">
                     <div class="setting-info">
                         <div class="setting-name">Two-Factor Authentication</div>
                         <div class="setting-description" id="twofa-status-text">2FA not enabled</div>
                     </div>
-                    <button class="setup-securitykey-btn" id="setup-twofa-btn">Enable 2FA</button>
+                    <button class="setup-twofa-btn" id="setup-twofa-btn">Enable 2FA</button>
                 </div>
                 <div class="twofa-status disabled" id="twofa-status">
                     Two-factor authentication not enabled. Click "Enable 2FA" to set up.
-                </div>
-
-                <!-- Face Registration Section -->
-                <div class="setting-option">
-                    <div class="setting-info">
-                        <div class="setting-name">Face Registration</div>
-                        <div class="setting-description" id="face-status-text">No face registered</div>
-                    </div>
-                    <button class="register-face-btn" id="register-face-btn">Register Face</button>
-                </div>
-                <div class="face-status not-registered" id="face-status">
-                    Face not registered. Click "Register Face" to set up Face ID.
                 </div>
                 
                 <!-- Passkey Registration Section -->
@@ -1132,6 +1065,18 @@
                 </div>
                 <div class="securitykey-status not-registered" id="securitykey-status">
                     Security key not registered. Click "Register Key" to add a security key.
+                </div>
+                
+                <!-- Face ID Registration Section -->
+                <div class="setting-option">
+                    <div class="setting-info">
+                        <div class="setting-name">Face ID Setup</div>
+                        <div class="setting-description" id="faceid-status-text">Face ID not registered</div>
+                    </div>
+                    <button class="register-face-btn" id="register-face-btn">Register Face</button>
+                </div>
+                <div class="face-status not-registered" id="face-status">
+                    Face ID not registered. Click "Register Face" to enable facial recognition.
                 </div>
             </div>
             
@@ -1161,48 +1106,34 @@
 
     <!-- Include the QR code scanning library -->
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-    <!-- Include FaceAPI.js for real face detection and recognition -->
-    <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.min.js"></script>
     <!-- Include OTP library for 2FA -->
     <script src="https://cdn.jsdelivr.net/npm/otpauth@9.1.3/dist/otpauth.umd.min.js"></script>
     <!-- Include QR Code generator -->
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <!-- Include Face-api.js for face recognition -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/face-landmarks-detection@0.0.1/dist/face-landmarks-detection.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
     
     <script>
-        // DOM Elements - all existing elements plus new 2FA setup elements
+        // DOM Elements
         const video = document.getElementById('video');
-        const faceidRegistrationVideo = document.getElementById('faceid-registration-video');
-        const faceidVerificationVideo = document.getElementById('faceid-verification-video');
         const startBtn = document.getElementById('start-btn');
         const stopBtn = document.getElementById('stop-btn');
         const status = document.getElementById('status');
         const errorDiv = document.getElementById('error');
         const successDiv = document.getElementById('success');
         const placeholder = document.getElementById('placeholder');
-        const faceidRegistrationPlaceholder = document.getElementById('faceid-registration-placeholder');
-        const faceidVerificationPlaceholder = document.getElementById('faceid-verification-placeholder');
         const scanRegion = document.getElementById('scan-region');
-        const faceRegistrationOverlay = document.getElementById('face-registration-overlay');
-        const faceVerificationOverlay = document.getElementById('face-verification-overlay');
-        const faceRegistrationIndicator = document.getElementById('face-registration-indicator');
-        const faceVerificationIndicator = document.getElementById('face-verification-indicator');
-        const faceVerificationFailed = document.getElementById('face-verification-failed');
-        const faceRegistrationScanning = document.getElementById('face-registration-scanning');
-        const faceVerificationScanning = document.getElementById('face-verification-scanning');
-        const faceRegistrationStats = document.getElementById('face-registration-stats');
-        const faceVerificationStats = document.getElementById('face-verification-stats');
-        const registrationConfidence = document.getElementById('registration-confidence');
-        const verificationConfidence = document.getElementById('verification-confidence');
         
         const scannerSection = document.getElementById('scanner-section');
         const authMethodSection = document.getElementById('auth-method-section');
         const pinSection = document.getElementById('pin-section');
+        const faceidSection = document.getElementById('faceid-section');
         const twofaSection = document.getElementById('twofa-section');
         const twofaSetupSection = document.getElementById('twofa-setup-section');
         const passkeySection = document.getElementById('passkey-section');
         const securitykeySection = document.getElementById('securitykey-section');
-        const faceidRegistrationSection = document.getElementById('faceid-registration-section');
-        const faceidVerificationSection = document.getElementById('faceid-verification-section');
         const settingsSection = document.getElementById('settings-section');
         const loadingContainer = document.getElementById('loading-container');
         const portalContainer = document.getElementById('portal-container');
@@ -1220,6 +1151,20 @@
         const pinSubmit = document.getElementById('pin-submit');
         const pinClear = document.getElementById('pin-clear');
         const pinError = document.getElementById('pin-error');
+        
+        // Face ID elements
+        const faceidVideo = document.getElementById('faceid-video');
+        const faceidPlaceholder = document.getElementById('faceid-placeholder');
+        const faceidStartBtn = document.getElementById('faceid-start-btn');
+        const faceidStopBtn = document.getElementById('faceid-stop-btn');
+        const faceidStatus = document.getElementById('faceid-status');
+        const faceidError = document.getElementById('faceid-error');
+        const faceidSuccess = document.getElementById('faceid-success');
+        const faceidSubmit = document.getElementById('faceid-submit');
+        const faceidCancel = document.getElementById('faceid-cancel');
+        const faceOverlay = document.getElementById('face-overlay');
+        const faceMatchIndicator = document.getElementById('face-match-indicator');
+        const faceidInstructions = document.getElementById('faceid-instructions');
         
         // 2FA elements
         const twofaInstructions = document.getElementById('twofa-instructions');
@@ -1248,74 +1193,62 @@
         const securitykeyStatus = document.getElementById('securitykey-status');
         const securitykeyError = document.getElementById('securitykey-error');
         
-        // Face ID elements
-        const faceidRegistrationSubmit = document.getElementById('faceid-registration-submit');
-        const faceidRegistrationCancel = document.getElementById('faceid-registration-cancel');
-        const faceidRegistrationError = document.getElementById('faceid-registration-error');
-        const faceidVerificationCancel = document.getElementById('faceid-verification-cancel');
-        const faceidVerificationError = document.getElementById('faceid-verification-error');
-        
         // Settings elements
         const settingsBtn = document.getElementById('settings-btn');
         const pinToggle = document.getElementById('pin-toggle');
-        const faceidToggle = document.getElementById('faceid-toggle');
         const passkeyToggle = document.getElementById('passkey-toggle');
         const securitykeyToggle = document.getElementById('securitykey-toggle');
-        // REMOVED: twofaToggle since 2FA is now setup-only
-        const registerFaceBtn = document.getElementById('register-face-btn');
+        const faceidToggle = document.getElementById('faceid-toggle');
         const setupPasskeyBtn = document.getElementById('setup-passkey-btn');
         const setupSecuritykeyBtn = document.getElementById('setup-securitykey-btn');
         const setupTwofaBtn = document.getElementById('setup-twofa-btn');
-        const faceStatus = document.getElementById('face-status');
-        const faceStatusText = document.getElementById('face-status-text');
+        const registerFaceBtn = document.getElementById('register-face-btn');
         const passkeyStatusText = document.getElementById('passkey-status-text');
         const passkeyStatusDisplay = document.getElementById('passkey-status');
         const securitykeyStatusText = document.getElementById('securitykey-status-text');
         const securitykeyStatusDisplay = document.getElementById('securitykey-status');
         const twofaStatusText = document.getElementById('twofa-status-text');
         const twofaStatusDisplay = document.getElementById('twofa-status');
+        const faceidStatusText = document.getElementById('faceid-status-text');
+        const faceStatusDisplay = document.getElementById('face-status');
         const saveSettings = document.getElementById('save-settings');
         const cancelSettings = document.getElementById('cancel-settings');
         
         // Variables for video stream and scanning
         let stream = null;
-        let faceidRegistrationStream = null;
-        let faceidVerificationStream = null;
+        let faceidStream = null;
         let scanning = false;
-        let faceidRegistrationScanning = false;
-        let faceidVerificationScanning = false;
+        let faceidScanning = false;
         let animationFrameId = null;
-        let faceRegistrationDetectionInterval = null;
-        let faceVerificationDetectionInterval = null;
+        let faceidAnimationFrameId = null;
         
-        // User authentication data - REMOVED twofa from authMethods since it's setup-only
+        // Face recognition variables
+        let faceDetectionModel = null;
+        let faceDescriptors = null;
+        let isRegisteringFace = false;
+        
+        // User authentication data
         let userData = {
             pin: localStorage.getItem('memberPortalPin'),
-            faceDescriptor: localStorage.getItem('memberPortalFaceDescriptor'),
             passkeyCredentialId: localStorage.getItem('memberPortalPasskeyCredentialId'),
             securityKeyCredentialId: localStorage.getItem('memberPortalSecurityKeyCredentialId'),
+            faceDescriptors: localStorage.getItem('memberPortalFaceDescriptors') ? 
+                JSON.parse(localStorage.getItem('memberPortalFaceDescriptors')) : null,
             twofaSecret: localStorage.getItem('memberPortal2FASecret'),
-            twofaEnabled: localStorage.getItem('memberPortal2FAEnabled') === 'true',
+            twofaEnabled: localStorage.getItem('memberPortal2FAEnabled') === 'true' && localStorage.getItem('memberPortal2FASecret') !== null,
             authMethods: {
                 pin: localStorage.getItem('memberPortalUsePin') !== 'false',
-                faceid: localStorage.getItem('memberPortalUseFaceID') === 'true',
                 passkey: localStorage.getItem('memberPortalUsePasskey') === 'true',
-                securitykey: localStorage.getItem('memberPortalUseSecurityKey') === 'true'
-                // REMOVED: twofa from authMethods
+                securitykey: localStorage.getItem('memberPortalUseSecurityKey') === 'true',
+                faceid: localStorage.getItem('memberPortalUseFaceID') === 'true'
             }
         };
 
         let isFirstTimeSetup = false;
-        let isRegisteringFace = false;
         let isSettingUpPasskey = false;
         let isSettingUpSecurityKey = false;
-        let isSettingUp2FA = false;
-        let currentFaceDescriptor = null;
-        let require2FA = false; // Track if 2FA is required after primary auth
-        let current2FASecret = null; // Track the secret during 2FA setup
-
-        // Face detection state
-        let faceapiLoaded = false;
+        let require2FA = false;
+        let current2FASecret = null;
 
         // SAFE SITES LIST
         const safeSites = [
@@ -1362,14 +1295,321 @@
             }
         ];
 
-        // Method descriptions - REMOVED 2FA from primary methods
+        // Method descriptions
         const methodDescriptions = {
             '': 'Select an authentication method to see details',
             'pin': '🔒 Use your 4-digit PIN code for quick access',
             'passkey': '📱 Use your device biometrics (Face ID, Touch ID, Windows Hello)',
             'securitykey': '🔑 Use a physical security key (YubiKey, etc.)',
-            'faceid': '👤 Use facial recognition with your camera'
+            'faceid': '👤 Use facial recognition to authenticate'
         };
+
+        // ==================== FACE ID IMPLEMENTATION ====================
+
+        // Initialize face detection model
+        async function initializeFaceDetection() {
+            try {
+                // Load face-api.js models
+                await faceapi.nets.tinyFaceDetector.loadFromUri('/models');
+                await faceapi.nets.faceLandmark68Net.loadFromUri('/models');
+                await faceapi.nets.faceRecognitionNet.loadFromUri('/models');
+                
+                faceDetectionModel = {
+                    tinyFaceDetector: faceapi.nets.tinyFaceDetector,
+                    faceLandmark68Net: faceapi.nets.faceLandmark68Net,
+                    faceRecognitionNet: faceapi.nets.faceRecognitionNet
+                };
+                
+                console.log("Face detection models loaded successfully");
+                return true;
+            } catch (error) {
+                console.error("Error loading face detection models:", error);
+                return false;
+            }
+        }
+
+        // Start Face ID
+        faceidStartBtn.addEventListener('click', async () => {
+            try {
+                faceidStatus.textContent = "Initializing camera...";
+                faceidError.style.display = 'none';
+                faceidSuccess.style.display = 'none';
+                
+                if (faceidStream) {
+                    faceidStream.getTracks().forEach(track => track.stop());
+                }
+                
+                faceidStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'user',
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
+                    } 
+                });
+                
+                faceidVideo.srcObject = faceidStream;
+                
+                faceidVideo.addEventListener('loadedmetadata', () => {
+                    faceidVideo.play();
+                    startFaceDetection();
+                    
+                    faceidVideo.style.display = 'block';
+                    faceidPlaceholder.style.display = 'none';
+                }, { once: true });
+                
+                faceidStartBtn.disabled = true;
+                faceidStopBtn.disabled = false;
+                faceidStatus.textContent = "Face ID active - position your face in frame";
+                
+                // Initialize face detection if not already done
+                if (!faceDetectionModel) {
+                    const success = await initializeFaceDetection();
+                    if (!success) {
+                        faceidError.textContent = "Face detection initialization failed. Please try another authentication method.";
+                        faceidError.style.display = 'block';
+                        stopFaceDetection();
+                        return;
+                    }
+                }
+                
+            } catch (err) {
+                console.error("Error accessing camera for Face ID:", err);
+                handleFaceIDCameraError(err);
+            }
+        });
+
+        // Stop Face ID
+        faceidStopBtn.addEventListener('click', () => {
+            stopFaceDetection();
+            
+            if (faceidStream) {
+                faceidStream.getTracks().forEach(track => track.stop());
+                faceidStream = null;
+            }
+            
+            faceidVideo.srcObject = null;
+            
+            faceidStartBtn.disabled = false;
+            faceidStopBtn.disabled = true;
+            faceidStatus.textContent = "Face ID is not active";
+            
+            faceidVideo.style.display = 'none';
+            faceidPlaceholder.style.display = 'block';
+            faceOverlay.style.display = 'none';
+            faceMatchIndicator.style.display = 'none';
+        });
+
+        // Handle Face ID camera errors
+        function handleFaceIDCameraError(err) {
+            let errorMessage = "Could not access camera for Face ID. ";
+            
+            if (err.name === 'NotAllowedError') {
+                errorMessage += "Camera permission was denied. Please allow camera access to use Face ID.";
+            } else if (err.name === 'NotFoundError') {
+                errorMessage += "No camera found on your device.";
+            } else if (err.name === 'NotSupportedError') {
+                errorMessage += "Camera access is not supported by your browser.";
+            } else if (err.name === 'NotReadableError') {
+                errorMessage += "Camera is already in use by another application.";
+            } else {
+                errorMessage += "Please check your camera settings and try again.";
+            }
+            
+            faceidError.textContent = errorMessage;
+            faceidError.style.display = 'block';
+            faceidStatus.textContent = "Camera access failed";
+            
+            faceidStartBtn.disabled = false;
+            faceidStopBtn.disabled = true;
+        }
+
+        // Start face detection
+        function startFaceDetection() {
+            faceidScanning = true;
+            detectFace();
+        }
+
+        // Stop face detection
+        function stopFaceDetection() {
+            faceidScanning = false;
+            if (faceidAnimationFrameId) {
+                cancelAnimationFrame(faceidAnimationFrameId);
+                faceidAnimationFrameId = null;
+            }
+        }
+
+        // Detect and recognize faces
+        async function detectFace() {
+            if (!faceidScanning) return;
+            
+            try {
+                const detections = await faceapi
+                    .detectAllFaces(faceidVideo, new faceapi.TinyFaceDetectorOptions())
+                    .withFaceLandmarks()
+                    .withFaceDescriptors();
+                
+                if (detections.length > 0) {
+                    const detection = detections[0];
+                    
+                    // Update face overlay position
+                    const { x, y, width, height } = detection.detection.box;
+                    faceOverlay.style.display = 'block';
+                    faceOverlay.style.left = `${x}px`;
+                    faceOverlay.style.top = `${y}px`;
+                    faceOverlay.style.width = `${width}px`;
+                    faceOverlay.style.height = `${height}px`;
+                    
+                    // If we're in registration mode, save the face descriptor
+                    if (isRegisteringFace) {
+                        faceDescriptors = detection.descriptor;
+                        faceidStatus.textContent = "Face captured! Click 'Register Face' to save.";
+                        faceidSubmit.style.display = 'block';
+                        faceOverlay.style.borderColor = '#4cd964';
+                        faceMatchIndicator.textContent = "Face detected - ready to register";
+                        faceMatchIndicator.className = "face-match-indicator";
+                        faceMatchIndicator.style.display = 'block';
+                    } 
+                    // If we're in authentication mode, compare with stored descriptor
+                    else if (userData.faceDescriptors && !isRegisteringFace) {
+                        const storedDescriptor = new Float32Array(userData.faceDescriptors);
+                        const distance = faceapi.euclideanDistance(storedDescriptor, detection.descriptor);
+                        
+                        // If the distance is below threshold, it's a match
+                        if (distance < 0.6) {
+                            faceOverlay.style.borderColor = '#4cd964';
+                            faceMatchIndicator.textContent = "Face verified! Authentication successful.";
+                            faceMatchIndicator.className = "face-match-indicator";
+                            faceMatchIndicator.style.display = 'block';
+                            
+                            // Auto-authenticate after a short delay
+                            setTimeout(() => {
+                                handleFaceAuthenticationSuccess();
+                            }, 1000);
+                        } else {
+                            faceOverlay.style.borderColor = '#ff3b30';
+                            faceMatchIndicator.textContent = "Face not recognized. Please try again.";
+                            faceMatchIndicator.className = "face-match-indicator unknown";
+                            faceMatchIndicator.style.display = 'block';
+                        }
+                    } 
+                    // If no face is registered yet
+                    else {
+                        faceOverlay.style.borderColor = '#fdbb2d';
+                        faceMatchIndicator.textContent = "Face detected - no registered face found";
+                        faceMatchIndicator.className = "face-match-indicator";
+                        faceMatchIndicator.style.display = 'block';
+                    }
+                } else {
+                    faceOverlay.style.display = 'none';
+                    faceMatchIndicator.style.display = 'none';
+                    faceidStatus.textContent = "No face detected - please position your face in frame";
+                }
+            } catch (error) {
+                console.error("Error during face detection:", error);
+            }
+            
+            faceidAnimationFrameId = requestAnimationFrame(detectFace);
+        }
+
+        // Handle successful face authentication
+        function handleFaceAuthenticationSuccess() {
+            stopFaceDetection();
+            
+            if (faceidStream) {
+                faceidStream.getTracks().forEach(track => track.stop());
+                faceidStream = null;
+            }
+            
+            faceidSection.style.display = 'none';
+            
+            if (userData.twofaEnabled) {
+                require2FA = true;
+                show2FASection();
+            } else {
+                loadingContainer.style.display = 'flex';
+                setTimeout(showPortal, 1000);
+            }
+        }
+
+        // Register face handler
+        faceidSubmit.addEventListener('click', () => {
+            if (faceDescriptors) {
+                localStorage.setItem('memberPortalFaceDescriptors', JSON.stringify(Array.from(faceDescriptors)));
+                userData.faceDescriptors = Array.from(faceDescriptors);
+                
+                faceidSuccess.textContent = "Face registered successfully!";
+                faceidSuccess.style.display = 'block';
+                
+                updateFaceIDStatus();
+                
+                setTimeout(() => {
+                    faceidSection.style.display = 'none';
+                    
+                    if (isFirstTimeSetup) {
+                        if (userData.twofaEnabled) {
+                            require2FA = true;
+                            show2FASection();
+                        } else {
+                            showAuthMethodSelection();
+                        }
+                    } else if (isRegisteringFace) {
+                        settingsSection.style.display = 'block';
+                        isRegisteringFace = false;
+                    }
+                }, 1500);
+            }
+        });
+
+        // Face ID cancel handler
+        faceidCancel.addEventListener('click', () => {
+            stopFaceDetection();
+            
+            if (faceidStream) {
+                faceidStream.getTracks().forEach(track => track.stop());
+                faceidStream = null;
+            }
+            
+            faceidSection.style.display = 'none';
+            
+            if (isFirstTimeSetup) {
+                showAuthMethodSelection();
+            } else if (isRegisteringFace) {
+                settingsSection.style.display = 'block';
+                isRegisteringFace = false;
+            } else {
+                showAuthMethodSelection();
+            }
+        });
+
+        // Show Face ID section
+        function showFaceIDSection() {
+            faceidSection.style.display = 'block';
+            
+            if (userData.faceDescriptors) {
+                faceidInstructions.textContent = "Position your face within the frame for authentication";
+                isRegisteringFace = false;
+            } else {
+                faceidInstructions.textContent = "Position your face within the frame to register";
+                isRegisteringFace = true;
+            }
+            
+            faceidSubmit.style.display = 'none';
+            faceOverlay.style.display = 'none';
+            faceMatchIndicator.style.display = 'none';
+        }
+
+        // Update Face ID status display
+        function updateFaceIDStatus() {
+            if (userData.faceDescriptors) {
+                faceStatusDisplay.textContent = "✓ Face ID is registered and ready to use";
+                faceStatusDisplay.className = "face-status registered";
+                faceidStatusText.textContent = "Face ID is registered";
+            } else {
+                faceStatusDisplay.textContent = "Face ID not registered. Click 'Register Face' to enable facial recognition.";
+                faceStatusDisplay.className = "face-status not-registered";
+                faceidStatusText.textContent = "Face ID not registered";
+            }
+        }
 
         // ==================== 2FA SETUP AND VERIFICATION ====================
 
@@ -1486,9 +1726,8 @@
                     showSecurityKeySection();
                     break;
                 case 'faceid':
-                    showFaceIDVerification();
+                    showFaceIDSection();
                     break;
-                // REMOVED: 2FA case since it's only a second factor
             }
         });
 
@@ -1578,7 +1817,6 @@
                 userData.pin = pin;
                 pinSection.style.display = 'none';
                 
-                // Check if 2FA is enabled and should be required
                 if (userData.twofaEnabled) {
                     require2FA = true;
                     show2FASection();
@@ -1589,7 +1827,6 @@
                 if (pin === userData.pin) {
                     pinSection.style.display = 'none';
                     
-                    // Check if 2FA is enabled and should be required
                     if (userData.twofaEnabled) {
                         require2FA = true;
                         show2FASection();
@@ -1665,7 +1902,6 @@
             if (!userData.twofaSecret || !userData.twofaEnabled) return false;
             
             try {
-                // Extract secret from URI format
                 const secretMatch = userData.twofaSecret.match(/secret=([A-Z2-7]+)/);
                 if (!secretMatch) return false;
                 
@@ -1717,23 +1953,22 @@
             }
         });
 
-        // Show 2FA section (only as second factor)
+        // Show 2FA section
         function show2FASection() {
-            if (userData.twofaEnabled) {
+            if (userData.twofaEnabled && userData.twofaSecret) {
                 twofaSection.style.display = 'block';
                 twofaInstructions.textContent = "Enter the 6-digit code from your authenticator app to complete login";
                 initialize2FAInputs();
             } else {
-                // This should not happen since 2FA is only triggered when enabled
-                twofaError.textContent = "2FA not enabled. Please set up 2FA first.";
-                twofaError.style.display = 'block';
-                setTimeout(() => {
-                    twofaSection.style.display = 'none';
-                    if (require2FA) {
-                        require2FA = false;
-                        showAuthMethodSelection();
-                    }
-                }, 2000);
+                twofaSection.style.display = 'none';
+                require2FA = false;
+                
+                if (isFirstTimeSetup) {
+                    showAuthMethodSelection();
+                } else {
+                    loadingContainer.style.display = 'flex';
+                    setTimeout(showPortal, 1000);
+                }
             }
         }
 
@@ -1742,8 +1977,7 @@
         // Check if browser supports WebAuthn
         function isWebAuthnSupported() {
             return window.PublicKeyCredential && 
-                   typeof window.PublicKeyCredential === 'function' &&
-                   typeof window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable === 'function';
+                   typeof window.PublicKeyCredential === 'function';
         }
 
         // Register a new passkey
@@ -1758,6 +1992,7 @@
             passkeyError.style.display = 'none';
             
             try {
+                // Real WebAuthn registration
                 const challenge = new Uint8Array(32);
                 crypto.getRandomValues(challenge);
                 
@@ -1801,7 +2036,6 @@
                 updatePasskeyStatus();
                 
                 if (isFirstTimeSetup) {
-                    // Check if 2FA is required after passkey setup
                     if (userData.twofaEnabled) {
                         require2FA = true;
                         setTimeout(() => {
@@ -1825,7 +2059,7 @@
                 
             } catch (error) {
                 console.error("Error registering passkey:", error);
-                passkeyError.textContent = "Failed to register passkey: " + error.message;
+                passkeyError.textContent = "Passkey setup failed: " + error.message;
                 passkeyError.style.display = 'block';
                 passkeyStatus.textContent = "";
             }
@@ -1834,7 +2068,7 @@
         // Authenticate with passkey
         async function authenticateWithPasskey() {
             if (!isWebAuthnSupported()) {
-                passkeyError.textContent = "Your browser doesn't support passkeys. Please use a modern browser like Chrome, Safari, or Edge.";
+                passkeyError.textContent = "Your browser doesn't support passkeys.";
                 passkeyError.style.display = 'block';
                 return;
             }
@@ -1849,6 +2083,7 @@
             passkeyError.style.display = 'none';
             
             try {
+                // Real WebAuthn authentication
                 const challenge = new Uint8Array(32);
                 crypto.getRandomValues(challenge);
                 
@@ -1871,7 +2106,6 @@
                 
                 passkeyStatus.textContent = "✓ Authentication successful!";
                 
-                // Check if 2FA is required after passkey auth
                 if (userData.twofaEnabled) {
                     require2FA = true;
                     setTimeout(() => {
@@ -1919,7 +2153,7 @@
         // Register a new security key
         async function registerSecurityKey() {
             if (!isWebAuthnSupported()) {
-                securitykeyError.textContent = "Your browser doesn't support security keys. Please use a modern browser like Chrome, Safari, or Edge.";
+                securitykeyError.textContent = "Your browser doesn't support security keys.";
                 securitykeyError.style.display = 'block';
                 return;
             }
@@ -1928,6 +2162,7 @@
             securitykeyError.style.display = 'none';
             
             try {
+                // Real WebAuthn registration for security keys
                 const challenge = new Uint8Array(32);
                 crypto.getRandomValues(challenge);
                 
@@ -1971,7 +2206,6 @@
                 updateSecurityKeyStatus();
                 
                 if (isFirstTimeSetup) {
-                    // Check if 2FA is required after security key setup
                     if (userData.twofaEnabled) {
                         require2FA = true;
                         setTimeout(() => {
@@ -1995,7 +2229,7 @@
                 
             } catch (error) {
                 console.error("Error registering security key:", error);
-                securitykeyError.textContent = "Failed to register security key: " + error.message;
+                securitykeyError.textContent = "Security key registration failed: " + error.message;
                 securitykeyError.style.display = 'block';
                 securitykeyStatus.textContent = "";
             }
@@ -2004,7 +2238,7 @@
         // Authenticate with security key
         async function authenticateWithSecurityKey() {
             if (!isWebAuthnSupported()) {
-                securitykeyError.textContent = "Your browser doesn't support security keys. Please use a modern browser like Chrome, Safari, or Edge.";
+                securitykeyError.textContent = "Your browser doesn't support security keys.";
                 securitykeyError.style.display = 'block';
                 return;
             }
@@ -2019,6 +2253,7 @@
             securitykeyError.style.display = 'none';
             
             try {
+                // Real WebAuthn authentication for security keys
                 const challenge = new Uint8Array(32);
                 crypto.getRandomValues(challenge);
                 
@@ -2041,7 +2276,6 @@
                 
                 securitykeyStatus.textContent = "✓ Authentication successful!";
                 
-                // Check if 2FA is required after security key auth
                 if (userData.twofaEnabled) {
                     require2FA = true;
                     setTimeout(() => {
@@ -2081,381 +2315,6 @@
                 securitykeyInstructions.textContent = "Register a security key for authentication";
                 securitykeyRegisterBtn.style.display = 'block';
                 securitykeyLoginBtn.style.display = 'none';
-            }
-        }
-
-        // ==================== FACE ID AUTHENTICATION ====================
-
-        // Initialize FaceAPI.js
-        async function initializeFaceDetection() {
-            try {
-                await faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/');
-                await faceapi.nets.faceLandmark68Net.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/');
-                await faceapi.nets.faceRecognitionNet.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/');
-                
-                faceapiLoaded = true;
-                console.log('FaceAPI.js loaded successfully');
-                return true;
-            } catch (error) {
-                console.error('Error loading FaceAPI.js:', error);
-                faceapiLoaded = false;
-                return false;
-            }
-        }
-
-        // Detect faces using FaceAPI.js
-        async function detectFaces(videoElement) {
-            if (!faceapiLoaded) return null;
-            
-            try {
-                const detection = await faceapi
-                    .detectSingleFace(videoElement, new faceapi.TinyFaceDetectorOptions())
-                    .withFaceLandmarks()
-                    .withFaceDescriptor();
-                
-                return detection;
-            } catch (error) {
-                console.error('Error detecting face:', error);
-                return null;
-            }
-        }
-
-        // Calculate face descriptor distance
-        function calculateFaceDistance(descriptor1, descriptor2) {
-            if (!descriptor1 || !descriptor2) return 1;
-            
-            let distance = 0;
-            for (let i = 0; i < descriptor1.length; i++) {
-                distance += Math.pow(descriptor1[i] - descriptor2[i], 2);
-            }
-            return Math.sqrt(distance);
-        }
-
-        // Start Face Detection for registration
-        async function startFaceRegistrationDetection() {
-            if (!faceapiLoaded) {
-                faceidRegistrationError.textContent = "Face detection not available. Please try another authentication method.";
-                faceidRegistrationError.style.display = 'block';
-                return;
-            }
-            
-            faceRegistrationScanning.style.display = 'flex';
-            faceRegistrationStats.style.display = 'block';
-            
-            faceRegistrationDetectionInterval = setInterval(async () => {
-                if (faceidRegistrationVideo.readyState === faceidRegistrationVideo.HAVE_ENOUGH_DATA) {
-                    const detection = await detectFaces(faceidRegistrationVideo);
-                    
-                    if (detection) {
-                        const box = detection.detection.box;
-                        
-                        faceRegistrationOverlay.style.display = 'block';
-                        faceRegistrationOverlay.style.left = `${box.x}px`;
-                        faceRegistrationOverlay.style.top = `${box.y}px`;
-                        faceRegistrationOverlay.style.width = `${box.width}px`;
-                        faceRegistrationOverlay.style.height = `${box.height}px`;
-                        
-                        const confidence = Math.round((1 - detection.detection.score) * 100);
-                        registrationConfidence.textContent = `${confidence}%`;
-                        
-                        faceRegistrationScanning.style.display = 'none';
-                        faceRegistrationIndicator.style.display = 'block';
-                        faceidRegistrationSubmit.disabled = false;
-                        
-                        currentFaceDescriptor = Array.from(detection.descriptor);
-                    } else {
-                        faceRegistrationOverlay.style.display = 'none';
-                        faceRegistrationIndicator.style.display = 'none';
-                        faceidRegistrationSubmit.disabled = true;
-                        currentFaceDescriptor = null;
-                        faceRegistrationScanning.style.display = 'flex';
-                        registrationConfidence.textContent = '0%';
-                    }
-                }
-            }, 500);
-        }
-
-        // Start Face Detection for verification
-        async function startFaceVerificationDetection() {
-            if (!faceapiLoaded || !userData.faceDescriptor) {
-                faceidVerificationError.textContent = "Face verification not available. Please use another authentication method.";
-                faceidVerificationError.style.display = 'block';
-                return;
-            }
-            
-            const storedDescriptor = JSON.parse(userData.faceDescriptor);
-            let verificationAttempts = 0;
-            const maxVerificationAttempts = 15;
-            
-            faceVerificationScanning.style.display = 'flex';
-            faceVerificationStats.style.display = 'block';
-            
-            faceVerificationDetectionInterval = setInterval(async () => {
-                if (faceidVerificationVideo.readyState === faceidVerificationVideo.HAVE_ENOUGH_DATA) {
-                    const detection = await detectFaces(faceidVerificationVideo);
-                    verificationAttempts++;
-                    
-                    if (detection) {
-                        const box = detection.detection.box;
-                        const currentDescriptor = Array.from(detection.descriptor);
-                        
-                        faceVerificationOverlay.style.display = 'block';
-                        faceVerificationOverlay.style.left = `${box.x}px`;
-                        faceVerificationOverlay.style.top = `${box.y}px`;
-                        faceVerificationOverlay.style.width = `${box.width}px`;
-                        faceVerificationOverlay.style.height = `${box.height}px`;
-                        
-                        const distance = calculateFaceDistance(currentDescriptor, storedDescriptor);
-                        const matchConfidence = Math.max(0, Math.round((1 - distance) * 100));
-                        verificationConfidence.textContent = `${matchConfidence}%`;
-                        
-                        const isMatch = distance < 0.6;
-                        
-                        if (isMatch && matchConfidence >= 65) {
-                            clearInterval(faceVerificationDetectionInterval);
-                            faceVerificationScanning.style.display = 'none';
-                            faceVerificationStats.style.display = 'none';
-                            faceVerificationIndicator.style.display = 'block';
-                            faceVerificationOverlay.style.borderColor = '#4cd964';
-                            
-                            // Check if 2FA is required after face verification
-                            if (userData.twofaEnabled) {
-                                require2FA = true;
-                                setTimeout(() => {
-                                    faceidVerificationSection.style.display = 'none';
-                                    stopFaceIDVerification();
-                                    show2FASection();
-                                }, 1000);
-                            } else {
-                                setTimeout(() => {
-                                    faceidVerificationSection.style.display = 'none';
-                                    stopFaceIDVerification();
-                                    loadingContainer.style.display = 'flex';
-                                    setTimeout(showPortal, 1000);
-                                }, 1000);
-                            }
-                        } else if (verificationAttempts >= maxVerificationAttempts) {
-                            clearInterval(faceVerificationDetectionInterval);
-                            faceVerificationScanning.style.display = 'none';
-                            faceVerificationStats.style.display = 'none';
-                            faceVerificationFailed.style.display = 'block';
-                            faceVerificationOverlay.className = 'face-overlay unknown';
-                        }
-                    } else {
-                        faceVerificationOverlay.style.display = 'none';
-                        faceVerificationIndicator.style.display = 'none';
-                        faceVerificationFailed.style.display = 'none';
-                        faceVerificationScanning.style.display = 'flex';
-                        verificationConfidence.textContent = '0%';
-                        faceVerificationOverlay.className = 'face-overlay';
-                        
-                        if (verificationAttempts >= maxVerificationAttempts) {
-                            clearInterval(faceVerificationDetectionInterval);
-                            faceVerificationScanning.style.display = 'none';
-                            faceVerificationStats.style.display = 'none';
-                            faceidVerificationError.textContent = "No face detected. Please try another authentication method.";
-                            faceidVerificationError.style.display = 'block';
-                        }
-                    }
-                }
-            }, 500);
-        }
-
-        // Stop Face Detection
-        function stopFaceDetection() {
-            if (faceRegistrationDetectionInterval) {
-                clearInterval(faceRegistrationDetectionInterval);
-                faceRegistrationDetectionInterval = null;
-            }
-            if (faceVerificationDetectionInterval) {
-                clearInterval(faceVerificationDetectionInterval);
-                faceVerificationDetectionInterval = null;
-            }
-            faceRegistrationOverlay.style.display = 'none';
-            faceVerificationOverlay.style.display = 'none';
-            faceRegistrationIndicator.style.display = 'none';
-            faceVerificationIndicator.style.display = 'none';
-            faceVerificationFailed.style.display = 'none';
-            faceRegistrationScanning.style.display = 'none';
-            faceVerificationScanning.style.display = 'none';
-            faceRegistrationStats.style.display = 'none';
-            faceVerificationStats.style.display = 'none';
-        }
-
-        // Start Face ID Registration
-        async function startFaceIDRegistration() {
-            try {
-                if (faceidRegistrationStream) {
-                    faceidRegistrationStream.getTracks().forEach(track => track.stop());
-                }
-                
-                faceidRegistrationStream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { 
-                        facingMode: 'user',
-                        width: { ideal: 640 },
-                        height: { ideal: 480 }
-                    } 
-                });
-                
-                faceidRegistrationVideo.srcObject = faceidRegistrationStream;
-                
-                faceidRegistrationVideo.addEventListener('loadedmetadata', () => {
-                    faceidRegistrationVideo.play();
-                    faceidRegistrationScanning = true;
-                    
-                    faceidRegistrationVideo.style.display = 'block';
-                    faceidRegistrationPlaceholder.style.display = 'none';
-                }, { once: true });
-                
-            } catch (err) {
-                console.error("Error accessing camera for Face ID:", err);
-                faceidRegistrationError.textContent = "Could not access camera for Face ID";
-                faceidRegistrationError.style.display = 'block';
-            }
-        }
-
-        // Start Face ID Verification
-        async function startFaceIDVerification() {
-            try {
-                if (faceidVerificationStream) {
-                    faceidVerificationStream.getTracks().forEach(track => track.stop());
-                }
-                
-                faceidVerificationStream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { 
-                        facingMode: 'user',
-                        width: { ideal: 640 },
-                        height: { ideal: 480 }
-                    } 
-                });
-                
-                faceidVerificationVideo.srcObject = faceidVerificationStream;
-                
-                faceidVerificationVideo.addEventListener('loadedmetadata', () => {
-                    faceidVerificationVideo.play();
-                    faceidVerificationScanning = true;
-                    
-                    faceidVerificationVideo.style.display = 'block';
-                    faceidVerificationPlaceholder.style.display = 'none';
-                }, { once: true });
-                
-            } catch (err) {
-                console.error("Error accessing camera for Face ID:", err);
-                faceidVerificationError.textContent = "Could not access camera for Face ID";
-                faceidVerificationError.style.display = 'block';
-            }
-        }
-
-        // Stop Face ID Registration
-        function stopFaceIDRegistration() {
-            faceidRegistrationScanning = false;
-            stopFaceDetection();
-            
-            if (faceidRegistrationStream) {
-                faceidRegistrationStream.getTracks().forEach(track => track.stop());
-                faceidRegistrationStream = null;
-            }
-            
-            faceidRegistrationVideo.srcObject = null;
-            faceidRegistrationVideo.style.display = 'none';
-            faceidRegistrationPlaceholder.style.display = 'block';
-        }
-
-        // Stop Face ID Verification
-        function stopFaceIDVerification() {
-            faceidVerificationScanning = false;
-            stopFaceDetection();
-            
-            if (faceidVerificationStream) {
-                faceidVerificationStream.getTracks().forEach(track => track.stop());
-                faceidVerificationStream = null;
-            }
-            
-            faceidVerificationVideo.srcObject = null;
-            faceidVerificationVideo.style.display = 'none';
-            faceidVerificationPlaceholder.style.display = 'block';
-        }
-
-        // Face ID Registration Submit handler
-        faceidRegistrationSubmit.addEventListener('click', () => {
-            if (currentFaceDescriptor) {
-                localStorage.setItem('memberPortalFaceDescriptor', JSON.stringify(currentFaceDescriptor));
-                userData.faceDescriptor = JSON.stringify(currentFaceDescriptor);
-                
-                if (isRegisteringFace) {
-                    faceidRegistrationSection.style.display = 'none';
-                    stopFaceIDRegistration();
-                    settingsSection.style.display = 'block';
-                    updateFaceStatus();
-                    isRegisteringFace = false;
-                } else {
-                    // Check if 2FA is required after face registration
-                    if (userData.twofaEnabled) {
-                        require2FA = true;
-                        faceidRegistrationSection.style.display = 'none';
-                        stopFaceIDRegistration();
-                        show2FASection();
-                    } else {
-                        faceidRegistrationSection.style.display = 'none';
-                        stopFaceIDRegistration();
-                        loadingContainer.style.display = 'flex';
-                        setTimeout(showPortal, 1500);
-                    }
-                }
-            }
-        });
-
-        // Face ID Registration Cancel handler
-        faceidRegistrationCancel.addEventListener('click', () => {
-            faceidRegistrationSection.style.display = 'none';
-            stopFaceIDRegistration();
-            
-            if (isRegisteringFace) {
-                settingsSection.style.display = 'block';
-                isRegisteringFace = false;
-            } else if (isFirstTimeSetup) {
-                showAuthMethodSelection();
-            } else {
-                scannerSection.style.display = 'block';
-            }
-        });
-
-        // Face ID Verification Cancel handler
-        faceidVerificationCancel.addEventListener('click', () => {
-            faceidVerificationSection.style.display = 'none';
-            stopFaceIDVerification();
-            showAuthMethodSelection();
-        });
-
-        // Start face registration process
-        async function startFaceRegistration() {
-            faceidRegistrationSection.style.display = 'block';
-            faceidRegistrationSubmit.disabled = true;
-            faceRegistrationScanning.style.display = 'flex';
-            
-            await startFaceIDRegistration();
-            startFaceRegistrationDetection();
-        }
-
-        // Start face verification process
-        async function startFaceVerification() {
-            faceidVerificationSection.style.display = 'block';
-            faceVerificationScanning.style.display = 'flex';
-            
-            await startFaceIDVerification();
-            startFaceVerificationDetection();
-        }
-
-        // Show Face ID verification
-        async function showFaceIDVerification() {
-            if (userData.faceDescriptor) {
-                await startFaceVerification();
-            } else {
-                faceidVerificationError.textContent = "Face ID not registered. Please choose another method.";
-                faceidVerificationError.style.display = 'block';
-                setTimeout(() => {
-                    showAuthMethodSelection();
-                }, 2000);
             }
         }
 
@@ -2618,7 +2477,7 @@
                 const isSafe = isUrlSafe(url);
                 
                 if (isSafe) {
-                    if (!userData.pin && !userData.faceDescriptor && !userData.passkeyCredentialId && !userData.securityKeyCredentialId) {
+                    if (!userData.pin && !userData.passkeyCredentialId && !userData.securityKeyCredentialId && !userData.faceDescriptors) {
                         isFirstTimeSetup = true;
                         loadingContainer.style.display = 'none';
                         showPinSection();
@@ -2641,19 +2500,6 @@
         }
 
         // ==================== SETTINGS MANAGEMENT ====================
-
-        // Update face status display
-        function updateFaceStatus() {
-            if (userData.faceDescriptor) {
-                faceStatus.textContent = "✓ Face ID is registered and ready to use";
-                faceStatus.className = "face-status registered";
-                faceStatusText.textContent = "Face ID is registered";
-            } else {
-                faceStatus.textContent = "Face not registered. Click 'Register Face' to set up Face ID.";
-                faceStatus.className = "face-status not-registered";
-                faceStatusText.textContent = "No face registered";
-            }
-        }
 
         // Update passkey status display
         function updatePasskeyStatus() {
@@ -2700,22 +2546,14 @@
             settingsSection.style.display = 'block';
             
             pinToggle.checked = userData.authMethods.pin;
-            faceidToggle.checked = userData.authMethods.faceid;
             passkeyToggle.checked = userData.authMethods.passkey;
             securitykeyToggle.checked = userData.authMethods.securitykey;
-            // REMOVED: twofaToggle since 2FA is now setup-only
+            faceidToggle.checked = userData.authMethods.faceid;
             
-            updateFaceStatus();
             updatePasskeyStatus();
             updateSecurityKeyStatus();
             update2FAStatus();
-        });
-
-        // Register Face button handler
-        registerFaceBtn.addEventListener('click', async () => {
-            settingsSection.style.display = 'none';
-            await startFaceRegistration();
-            isRegisteringFace = true;
+            updateFaceIDStatus();
         });
 
         // Setup Passkey button handler
@@ -2744,24 +2582,31 @@
             setup2FA();
         });
 
+        // Register Face button handler
+        registerFaceBtn.addEventListener('click', () => {
+            settingsSection.style.display = 'none';
+            faceidSection.style.display = 'block';
+            faceidInstructions.textContent = "Position your face within the frame to register";
+            isRegisteringFace = true;
+            faceidSubmit.style.display = 'none';
+        });
+
         // Save settings handler
         saveSettings.addEventListener('click', () => {
             userData.authMethods.pin = pinToggle.checked;
-            userData.authMethods.faceid = faceidToggle.checked;
             userData.authMethods.passkey = passkeyToggle.checked;
             userData.authMethods.securitykey = securitykeyToggle.checked;
-            // REMOVED: twofa from authMethods since it's setup-only
+            userData.authMethods.faceid = faceidToggle.checked;
             
-            if (!userData.authMethods.pin && !userData.authMethods.faceid && !userData.authMethods.passkey && !userData.authMethods.securitykey) {
+            if (!userData.authMethods.pin && !userData.authMethods.passkey && !userData.authMethods.securitykey && !userData.authMethods.faceid) {
                 userData.authMethods.pin = true;
                 pinToggle.checked = true;
             }
             
             localStorage.setItem('memberPortalUsePin', userData.authMethods.pin.toString());
-            localStorage.setItem('memberPortalUseFaceID', userData.authMethods.faceid.toString());
             localStorage.setItem('memberPortalUsePasskey', userData.authMethods.passkey.toString());
             localStorage.setItem('memberPortalUseSecurityKey', userData.authMethods.securitykey.toString());
-            // REMOVED: twofa settings storage since it's setup-only
+            localStorage.setItem('memberPortalUseFaceID', userData.authMethods.faceid.toString());
             
             settingsSection.style.display = 'none';
             portalContainer.style.display = 'block';
@@ -2796,15 +2641,14 @@
                 settingsSection.style.display = 'block';
                 
                 pinToggle.checked = userData.authMethods.pin;
-                faceidToggle.checked = userData.authMethods.faceid;
                 passkeyToggle.checked = userData.authMethods.passkey;
                 securitykeyToggle.checked = userData.authMethods.securitykey;
-                // REMOVED: twofaToggle since 2FA is now setup-only
+                faceidToggle.checked = userData.authMethods.faceid;
                 
-                updateFaceStatus();
                 updatePasskeyStatus();
                 updateSecurityKeyStatus();
                 update2FAStatus();
+                updateFaceIDStatus();
             });
             
             const welcomeMessage = document.createElement('h2');
@@ -2874,12 +2718,20 @@
                 scanRegion.style.display = 'none';
             }
             
-            if (document.hidden && faceidRegistrationScanning) {
-                stopFaceIDRegistration();
-            }
-            
-            if (document.hidden && faceidVerificationScanning) {
-                stopFaceIDVerification();
+            if (document.hidden && faceidScanning) {
+                stopFaceDetection();
+                if (faceidStream) {
+                    faceidStream.getTracks().forEach(track => track.stop());
+                    faceidStream = null;
+                }
+                faceidVideo.srcObject = null;
+                faceidStartBtn.disabled = false;
+                faceidStopBtn.disabled = true;
+                faceidStatus.textContent = "Face ID paused - page not visible";
+                
+                faceidVideo.style.display = 'none';
+                faceidPlaceholder.style.display = 'block';
+                faceOverlay.style.display = 'none';
             }
         });
 
@@ -2887,24 +2739,16 @@
 
         // Initialize the application
         window.addEventListener('load', async () => {
-            const faceDetectionReady = await initializeFaceDetection();
-            if (!faceDetectionReady) {
-                console.warn('Face detection not available');
-            }
-            
-            updateFaceStatus();
             updatePasskeyStatus();
             updateSecurityKeyStatus();
             update2FAStatus();
+            updateFaceIDStatus();
             
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
                 errorDiv.textContent = "Your browser doesn't support camera access. Please try using Chrome, Firefox, or Edge.";
                 errorDiv.style.display = 'block';
                 startBtn.disabled = true;
-            }
-            
-            if (!isWebAuthnSupported()) {
-                console.warn("WebAuthn not supported in this browser");
+                faceidStartBtn.disabled = true;
             }
         });
     </script>
